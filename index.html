@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrast Conundrum Game</title>
+    <title>The contrast challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,35 +64,29 @@
         <!-- Feedback Area -->
         <div id="feedback-area" class="hidden text-center fade-in">
              <h2 id="feedback-title" class="text-3xl font-bold mb-3"></h2>
-             <p id="feedback-subtitle" class="text-gray-400 mb-6 text-base max-w-xl mx-auto"></p>
+             <div id="feedback-subtitle" class="text-gray-400 mb-6 text-base max-w-xl mx-auto"></div>
             
-             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left p-4 bg-gray-900 rounded-lg">
+             <div class="grid grid-cols-2 gap-4 text-left p-4 bg-gray-900 rounded-lg">
                 <!-- Results for A -->
                 <div class="p-4 bg-gray-700 rounded-lg">
                     <h3 class="text-xl font-bold text-white mb-3">Combination A</h3>
+                    <div id="preview-A" class="w-full h-20 rounded-md flex items-center justify-center p-2 text-center font-bold text-sm mb-3">
+                        Sample Text
+                    </div>
                     <div class="space-y-2">
-                        <div>
-                            <p class="text-sm text-gray-400">WCAG 2.2 Ratio</p>
-                            <p id="wcag-score-A" class="text-lg font-semibold"></p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">APCA Lc Score</p>
-                            <p id="apca-score-A" class="text-lg font-semibold"></p>
-                        </div>
+                        <p id="wcag-score-A" class="text-lg"></p>
+                        <p id="apca-score-A" class="text-lg"></p>
                     </div>
                 </div>
                 <!-- Results for B -->
                  <div class="p-4 bg-gray-700 rounded-lg">
                     <h3 class="text-xl font-bold text-white mb-3">Combination B</h3>
-                    <div class="space-y-2">
-                        <div>
-                            <p class="text-sm text-gray-400">WCAG 2.2 Ratio</p>
-                            <p id="wcag-score-B" class="text-lg font-semibold"></p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">APCA Lc Score</p>
-                            <p id="apca-score-B" class="text-lg font-semibold"></p>
-                        </div>
+                    <div id="preview-B" class="w-full h-20 rounded-md flex items-center justify-center p-2 text-center font-bold text-sm mb-3">
+                        Sample Text
+                    </div>
+                     <div class="space-y-2">
+                        <p id="wcag-score-B" class="text-lg"></p>
+                        <p id="apca-score-B" class="text-lg"></p>
                     </div>
                 </div>
              </div>
@@ -105,7 +99,7 @@
         <!-- Game Over Area -->
         <div id="game-over-area" class="hidden text-center fade-in">
             <h2 class="text-3xl font-bold text-white mb-4">Game Summary</h2>
-            <p class="text-gray-400 max-w-2xl mx-auto mb-8">Here's how you did. The goal was to pick the higher WCAG ratio. Compare your answers to the pair that was actually more readable (higher APCA score).</p>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-8">Here's how you did. The goal was to pick the higher WCAG ratio. Compare your answers to the pair that was actually more readable according to the APCA score.</p>
             
             <div id="summary-table-container" class="w-full text-left text-sm sm:text-base">
                 <table class="w-full border-collapse">
@@ -137,16 +131,18 @@
 
     <script>
         const questionPairs = [
-            { pairA: { text: '#FF9900', bg: '#000000', wcag: 8.1, apca: 53.6 }, pairB: { text: '#555555', bg: '#FFFFFF', wcag: 5.6, apca: 62.4 }, correctAnswer: 'A' },
-            { pairA: { text: '#00C0FF', bg: '#000000', wcag: 5.5, apca: 42.1 }, pairB: { text: '#777777', bg: '#FFFFFF', wcag: 3.5, apca: 74.3 }, correctAnswer: 'A' },
-            { pairA: { text: '#7A7A7A', bg: '#3C3C3C', wcag: 3.02, apca: 20.4 }, pairB: { text: '#CCCCCC', bg: '#7B7B7B', wcag: 3.03, apca: 30.7 }, correctAnswer: 'B' },
-            { pairA: { text: '#5F5F5F', bg: '#000000', wcag: 3.18, apca: 22.8 }, pairB: { text: '#808080', bg: '#FFFFFF', wcag: 3.24, apca: 79.4 }, correctAnswer: 'B' },
-            { pairA: { text: '#C00000', bg: '#000000', wcag: 3.14, apca: 22.3 }, pairB: { text: '#005A9C', bg: '#000000', wcag: 3.05, apca: 20.9 }, correctAnswer: 'A' },
-            { pairA: { text: '#FF00FF', bg: '#000000', wcag: 5.3, apca: 39.4 }, pairB: { text: '#6A6A6A', bg: '#FFFFFF', wcag: 4.5, apca: 68.2 }, correctAnswer: 'A' },
-            { pairA: { text: '#00FFFF', bg: '#000000', wcag: 8.9, apca: 60.1 }, pairB: { text: '#444444', bg: '#FFFFFF', wcag: 7.0, apca: 56.4 }, correctAnswer: 'A' },
-            { pairA: { text: '#FFBF47', bg: '#000000', wcag: 9.3, apca: 60.6 }, pairB: { text: '#0073FF', bg: '#FFFFFF', wcag: 3.3, apca: 48.9 }, correctAnswer: 'A' },
-            { pairA: { text: '#909090', bg: '#4A4A4A', wcag: 3.05, apca: 21.3 }, pairB: { text: '#A0522D', bg: '#1E1E1E', wcag: 3.25, apca: 24.3 }, correctAnswer: 'B' },
-            { pairA: { text: '#4B8378', bg: '#222222', wcag: 3.04, apca: 21.0 }, pairB: { text: '#8B4513', bg: '#000000', wcag: 3.32, apca: 25.1 }, correctAnswer: 'B' },
+            // All 20 color combinations are now unique.
+            // Each question pits a higher WCAG score against a higher perceptual readability (APCA) score.
+            { pairA: { text: '#C5000B', bg: '#111111', wcag: 3.5, apca: 25 }, pairB: { text: '#757575', bg: '#FFFFFF', wcag: 3.4, apca: 73 }, correctAnswer: 'A' },
+            { pairA: { text: '#606060', bg: '#E0E0E0', wcag: 3.0, apca: 44 }, pairB: { text: '#3675A9', bg: '#222222', wcag: 3.1, apca: 23 }, correctAnswer: 'B' },
+            { pairA: { text: '#FF9A00', bg: '#001F5C', wcag: 5.1, apca: 40 }, pairB: { text: '#595959', bg: '#FFFFFF', wcag: 5.0, apca: 65 }, correctAnswer: 'A' },
+            { pairA: { text: '#006284', bg: '#EFEFEF', wcag: 4.5, apca: 55 }, pairB: { text: '#888888', bg: '#333333', wcag: 4.8, apca: 31 }, correctAnswer: 'B' },
+            { pairA: { text: '#C4C4C4', bg: '#6A6A6A', wcag: 4.5, apca: 35 }, pairB: { text: '#8A3D00', bg: '#FFFFFF', wcag: 4.3, apca: 56 }, correctAnswer: 'A' },
+            { pairA: { text: '#845000', bg: '#CCCCCC', wcag: 3.0, apca: 38 }, pairB: { text: '#9D9D9D', bg: '#505050', wcag: 3.1, apca: 23 }, correctAnswer: 'B' },
+            { pairA: { text: '#D1006B', bg: '#2B2B2B', wcag: 4.6, apca: 31 }, pairB: { text: '#767676', bg: '#FFFFFF', wcag: 3.4, apca: 73 }, correctAnswer: 'A' },
+            { pairA: { text: '#2E8B57', bg: '#F5F5F5', wcag: 4.3, apca: 61 }, pairB: { text: '#FFC400', bg: '#282828', wcag: 8.6, apca: 58 }, correctAnswer: 'B' },
+            { pairA: { text: '#E6E6E6', bg: '#767676', wcag: 4.7, apca: 37 }, pairB: { text: '#005999', bg: '#FFFFFF', wcag: 4.6, apca: 60 }, correctAnswer: 'A' },
+            { pairA: { text: '#6D5699', bg: '#E0E0E0', wcag: 4.4, apca: 49 }, pairB: { text: '#CF4A4A', bg: '#333333', wcag: 4.5, apca: 32 }, correctAnswer: 'B' }
         ];
 
         // DOM Elements
@@ -165,6 +161,8 @@
         const apcaScoreA = document.getElementById('apca-score-A');
         const wcagScoreB = document.getElementById('wcag-score-B');
         const apcaScoreB = document.getElementById('apca-score-B');
+        const previewA = document.getElementById('preview-A');
+        const previewB = document.getElementById('preview-B');
         const finalScoreEl = document.getElementById('final-score');
         const summaryTableBody = document.getElementById('summary-table-body');
         const wcagFinalScoreEl = document.getElementById('wcag-final-score');
@@ -214,11 +212,11 @@
                 score++;
                 feedbackTitle.textContent = "Correct!";
                 feedbackTitle.style.color = 'rgb(74 222 128)';
-                feedbackSubtitle.textContent = `You're right, Pair ${currentPair.correctAnswer} has the higher WCAG ratio. But notice which one has the higher *readability* (APCA) score below.`;
+                feedbackSubtitle.innerHTML = `You're right, Pair ${currentPair.correctAnswer} has the higher WCAG ratio.<br>Notice which one has the higher *readability* (APCA) score below.`;
             } else {
                 feedbackTitle.textContent = "Not Quite!";
                 feedbackTitle.style.color = 'rgb(248 113 113)';
-                feedbackSubtitle.textContent = `That's a common mistake! Pair ${currentPair.correctAnswer} actually has the higher WCAG ratio. This is why the old algorithm can be so misleading.`;
+                feedbackSubtitle.innerHTML = `That's a common mistake! Pair ${currentPair.correctAnswer} actually has the higher WCAG ratio.<br>This is why the old algorithm can be so misleading.`;
             }
 
             document.getElementById('score-counter').textContent = `Score: ${score}`;
@@ -226,12 +224,27 @@
         }
 
         function showFeedback() {
-// ... existing code ... -->
+            gameArea.classList.add('hidden');
+            const currentPair = questionPairs[currentQuestionIndex];
+
+            // Populate the scores
+            wcagScoreA.innerHTML = `<span class="text-gray-400">WCAG 2.2 Ratio:</span> <span class="font-semibold text-white">${currentPair.pairA.wcag}:1</span>`;
+            apcaScoreA.innerHTML = `<span class="text-gray-400">APCA Lc Score:</span> <span class="font-semibold text-white">${currentPair.pairA.apca}</span>`;
+            wcagScoreB.innerHTML = `<span class="text-gray-400">WCAG 2.2 Ratio:</span> <span class="font-semibold text-white">${currentPair.pairB.wcag}:1</span>`;
+            apcaScoreB.innerHTML = `<span class="text-gray-400">APCA Lc Score:</span> <span class="font-semibold text-white">${currentPair.pairB.apca}</span>`;
+
+            // Populate the previews
+            previewA.style.backgroundColor = currentPair.pairA.bg;
+            previewA.style.color = currentPair.pairA.text;
+            previewB.style.backgroundColor = currentPair.pairB.bg;
+            previewB.style.color = currentPair.pairB.text;
+
             feedbackArea.classList.remove('hidden');
         }
         
         function nextQuestion() {
-// ... existing code ... -->
+            currentQuestionIndex++;
+            console.log('Loading next question. New index:', currentQuestionIndex); // This is the debug line
             if (currentQuestionIndex < questionPairs.length) {
                 showQuestion();
             } else {
@@ -294,5 +307,3 @@
     </script>
 </body>
 </html>
-
-
