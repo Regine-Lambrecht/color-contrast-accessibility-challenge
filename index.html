@@ -141,30 +141,45 @@
 
     <script>
         const questionPairs = [
-            // WCAG Fail (but APCA Pass) vs WCAG Pass (but low APCA)
-            { pairA: { text: '#0096C1', bg: '#FFFFFF', wcag: 2.9, apca: 50 }, pairB: { text: '#C5000B', bg: '#111111', wcag: 3.5, apca: 25 }, correctAnswer: 'B' },
-            // Green Background Question
-            { pairA: { text: '#FFA500', bg: '#006400', wcag: 3.5, apca: 26 }, pairB: { text: '#000000', bg: '#90EE90', wcag: 3.1, apca: 62 }, correctAnswer: 'A' },
-            // SPECIAL INVERTED QUESTION: WCAG is identical, APCA differs.
+            // WCAG hardcoded values removed. They will be calculated live.
+            { pairA: { text: '#0097C3', bg: '#FFFFFF', apca: 50.1 }, pairB: { text: '#C5000B', bg: '#111111', apca: 25.1 } },
+            { pairA: { text: '#FFA500', bg: '#006400', apca: 26.2 }, pairB: { text: '#000000', bg: '#90EE90', apca: 62.1 } },
             { 
-                pairA: { text: '#6E6E6E', bg: '#FFFFFF', wcag: 3.8, apca: 70 }, 
-                pairB: { text: '#FFFFFF', bg: '#6E6E6E', wcag: 3.8, apca: 34 }, 
-                correctAnswer: 'A', // Placeholder, logic is overridden
+                pairA: { text: '#6E6E6E', bg: '#FFFFFF', apca: 70.1 }, 
+                pairB: { text: '#FFFFFF', bg: '#6E6E6E', apca: 34.2 }, 
                 isSpecial: 'inverted'
             },
-            // WCAG Fail (but APCA Pass) vs WCAG Pass (but low APCA)
-            { pairA: { text: '#EFEFEF', bg: '#808080', wcag: 2.9, apca: 46 }, pairB: { text: '#9D9D9D', bg: '#505050', wcag: 3.1, apca: 23 }, correctAnswer: 'B' },
-            // Blue Background Question
-            { pairA: { text: '#A9A9A9', bg: '#002D62', wcag: 5.1, apca: 36 }, pairB: { text: '#000000', bg: '#87CEEB', wcag: 4.8, apca: 78 }, correctAnswer: 'A' },
-            // NEW Green-on-Red Question
-            { pairA: { text: '#90EE90', bg: '#B22222', wcag: 3.1, apca: 15 }, pairB: { text: '#0096C1', bg: '#FFFFFF', wcag: 2.9, apca: 50 }, correctAnswer: 'A' },
-            // WCAG Pass (high APCA) vs WCAG Fail (but good APCA)
-            { pairA: { text: '#757575', bg: '#FFFFFF', wcag: 3.4, apca: 73 }, pairB: { text: '#D2691E', bg: '#FFFFFF', wcag: 2.9, apca: 50 }, correctAnswer: 'A' },
-            // Regular comparison
-            { pairA: { text: '#2E8B57', bg: '#F5F5F5', wcag: 4.3, apca: 61 }, pairB: { text: '#FFC400', bg: '#282828', wcag: 8.6, apca: 58 }, correctAnswer: 'B' },
-            { pairA: { text: '#E6E6E6', bg: '#767676', wcag: 4.7, apca: 37 }, pairB: { text: '#005999', bg: '#FFFFFF', wcag: 4.6, apca: 60 }, correctAnswer: 'A' },
-            { pairA: { text: '#606060', bg: '#E0E0E0', wcag: 3.0, apca: 44 }, pairB: { text: '#3675A9', bg: '#222222', wcag: 3.1, apca: 23 }, correctAnswer: 'B' }
+            { pairA: { text: '#EFEFEF', bg: '#808080', apca: 46.3 }, pairB: { text: '#9D9D9D', bg: '#505050', apca: 22.8 } },
+            { pairA: { text: '#A9A9A9', bg: '#002D62', apca: 35.9 }, pairB: { text: '#000000', bg: '#87CEEB', apca: 78.2 } },
+            { pairA: { text: '#90EE90', bg: '#B22222', apca: 15.4 }, pairB: { text: '#0097C3', bg: '#FFFFFF', apca: 50.1 } },
+            { pairA: { text: '#757575', bg: '#FFFFFF', apca: 72.9 }, pairB: { text: '#D2691E', bg: '#FFFFFF', apca: 50.1 } },
+            { pairA: { text: '#2E8B57', bg: '#F5F5F5', apca: 61.3 }, pairB: { text: '#FFC400', bg: '#282828', apca: 58.1 } },
+            { pairA: { text: '#E6E6E6', bg: '#767676', apca: 36.8 }, pairB: { text: '#005999', bg: '#FFFFFF', apca: 59.9 } },
+            { pairA: { text: '#606060', bg: '#E0E0E0', apca: 44.2 }, pairB: { text: '#3675A9', bg: '#222222', apca: 23.3 } }
         ];
+
+        // --- CONTRAST CALCULATION ENGINE ---
+        function getLuminance(hex) {
+            const rgb = parseInt(hex.slice(1), 16);
+            let r = (rgb >> 16) & 0xff;
+            let g = (rgb >> 8) & 0xff;
+            let b = (rgb >> 0) & 0xff;
+            
+            const srgb = [r, g, b].map(val => {
+                const s = val / 255;
+                return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+            });
+
+            return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+        }
+
+        function getWcagContrast(hex1, hex2) {
+            const lum1 = getLuminance(hex1);
+            const lum2 = getLuminance(hex2);
+            const lighter = Math.max(lum1, lum2);
+            const darker = Math.min(lum1, lum2);
+            return (lighter + 0.05) / (darker + 0.05);
+        }
 
         // DOM Elements
         const gameArea = document.getElementById('game-area');
@@ -201,7 +216,7 @@
             currentQuestionIndex = 0;
             score = 0;
             userGuesses = [];
-            questionPairs.sort(() => Math.random() - 0.5);
+            // The line that randomized the question order has been removed.
 
             gameOverArea.classList.add('hidden');
             gameArea.classList.remove('hidden');
@@ -228,6 +243,9 @@
         function handleGuess(guess) {
             userGuesses.push(guess);
             const currentPair = questionPairs[currentQuestionIndex];
+            const contrastA = getWcagContrast(currentPair.pairA.text, currentPair.pairA.bg);
+            const contrastB = getWcagContrast(currentPair.pairB.text, currentPair.pairB.bg);
+            const correctAnswer = contrastA > contrastB ? 'A' : 'B';
 
             // Handle the special inverted question
             if (currentPair.isSpecial === 'inverted') {
@@ -237,16 +255,16 @@
                 feedbackSubtitle.innerHTML = "Actually both had the same WCAG ratio, but look at the APCA one.";
             } else {
                 // Handle regular questions
-                const correct = guess === currentPair.correctAnswer;
+                const correct = guess === correctAnswer;
                 if (correct) {
                     score++;
                     feedbackTitle.textContent = "Correct!";
                     feedbackTitle.style.color = 'rgb(74 222 128)';
-                    feedbackSubtitle.innerHTML = `You're right, Pair ${currentPair.correctAnswer} has the higher WCAG ratio.<br>But notice which one has the higher *readability* (APCA) score below.`;
+                    feedbackSubtitle.innerHTML = `You're right, Pair ${correctAnswer} has the higher WCAG ratio.<br>But notice which one has the higher *readability* (APCA) score below.`;
                 } else {
                     feedbackTitle.textContent = "Not Quite!";
                     feedbackTitle.style.color = 'rgb(248 113 113)';
-                    feedbackSubtitle.innerHTML = `That's a common mistake! Pair ${currentPair.correctAnswer} actually has the higher WCAG ratio.<br>This is why the old algorithm can be so misleading.`;
+                    feedbackSubtitle.innerHTML = `That's a common mistake! Pair ${correctAnswer} actually has the higher WCAG ratio.<br>This is why the old algorithm can be so misleading.`;
                 }
             }
 
@@ -260,6 +278,10 @@
             const wcagPassThreshold = 3.0; // For large text
             const apcaPassThreshold = 45; // Minimum for non-body text
 
+            // Calculate WCAG scores live
+            const wcagA = getWcagContrast(currentPair.pairA.text, currentPair.pairA.bg);
+            const wcagB = getWcagContrast(currentPair.pairB.text, currentPair.pairB.bg);
+
             // Update button text for the last question
             if (currentQuestionIndex === questionPairs.length - 1) {
                 nextQuestionBtn.textContent = 'Final Score';
@@ -268,17 +290,17 @@
             }
 
             // --- Populate the scores for Pair A ---
-            const wcagA_status = currentPair.pairA.wcag >= wcagPassThreshold ? '<span class="text-green-400 font-semibold">Pass</span>' : '<span class="text-red-400 font-semibold">Fail</span>';
+            const wcagA_status = wcagA >= wcagPassThreshold ? '<span class="text-green-400 font-semibold">Pass</span>' : '<span class="text-red-400 font-semibold">Fail</span>';
             const apcaA_status = currentPair.pairA.apca >= apcaPassThreshold ? '<span class="text-green-400 font-semibold">Pass</span>' : '<span class="text-red-400 font-semibold">Fail</span>';
             
-            wcagScoreA.innerHTML = `<div><span class="text-gray-200">WCAG 2.2:</span> <span class="font-semibold text-white">${currentPair.pairA.wcag}:1</span></div> ${wcagA_status}`;
+            wcagScoreA.innerHTML = `<div><span class="text-gray-200">WCAG 2.2:</span> <span class="font-semibold text-white">${wcagA.toFixed(2)}:1</span></div> ${wcagA_status}`;
             apcaScoreA.innerHTML = `<div><span class="text-gray-200">APCA Lc:</span> <span class="font-semibold text-white">${currentPair.pairA.apca}</span></div> ${apcaA_status}`;
             
             // --- Populate the scores for Pair B ---
-            const wcagB_status = currentPair.pairB.wcag >= wcagPassThreshold ? '<span class="text-green-400 font-semibold">Pass</span>' : '<span class="text-red-400 font-semibold">Fail</span>';
+            const wcagB_status = wcagB >= wcagPassThreshold ? '<span class="text-green-400 font-semibold">Pass</span>' : '<span class="text-red-400 font-semibold">Fail</span>';
             const apcaB_status = currentPair.pairB.apca >= apcaPassThreshold ? '<span class="text-green-400 font-semibold">Pass</span>' : '<span class="text-red-400 font-semibold">Fail</span>';
 
-            wcagScoreB.innerHTML = `<div><span class="text-gray-200">WCAG 2.2:</span> <span class="font-semibold text-white">${currentPair.pairB.wcag}:1</span></div> ${wcagB_status}`;
+            wcagScoreB.innerHTML = `<div><span class="text-gray-200">WCAG 2.2:</span> <span class="font-semibold text-white">${wcagB.toFixed(2)}:1</span></div> ${wcagB_status}`;
             apcaScoreB.innerHTML = `<div><span class="text-gray-200">APCA Lc:</span> <span class="font-semibold text-white">${currentPair.pairB.apca}</span></div> ${apcaB_status}`;
 
 
@@ -293,7 +315,6 @@
         
         function nextQuestion() {
             currentQuestionIndex++;
-            // console.log('Loading next question. New index:', currentQuestionIndex); // This is the debug line
             if (currentQuestionIndex < questionPairs.length) {
                 showQuestion();
             } else {
@@ -308,12 +329,15 @@
             questionPairs.forEach((pair, index) => {
                 const userGuess = userGuesses[index];
                 
+                const wcagA = getWcagContrast(pair.pairA.text, pair.pairA.bg);
+                const wcagB = getWcagContrast(pair.pairB.text, pair.pairB.bg);
+                const correctAnswer = wcagA > wcagB ? 'A' : 'B';
+
                 let wcagCorrect;
                 if (pair.isSpecial === 'inverted') {
-                    // For the special question, any answer is "correct" for the summary checkmark
                     wcagCorrect = true; 
                 } else {
-                    wcagCorrect = userGuess === pair.correctAnswer;
+                    wcagCorrect = userGuess === correctAnswer;
                 }
 
                 const higherApcaPair = pair.pairA.apca > pair.pairB.apca ? 'A' : 'B';
@@ -326,11 +350,10 @@
                 const row = document.createElement('tr');
                 row.className = 'bg-gray-800';
                 
-                let higherWcagText = pair.correctAnswer;
+                let higherWcagText = correctAnswer;
                 if (pair.isSpecial === 'inverted') {
                     higherWcagText = 'Both Same';
                 }
-
 
                 row.innerHTML = `
                     <td class="p-2 sm:p-3">
@@ -384,10 +407,6 @@
             gameOverArea.classList.remove('hidden');
         }
         
-        function updateScoreDisplay() {
-            // This function is no longer needed during the game
-        }
-
         window.onload = startGame;
     </script>
 </body>
