@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrast Conundrum Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .choice-card {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .choice-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+
+    <div id="game-container" class="w-full max-w-3xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8">
+        
+        <div class="text-center mb-6">
+            <h1 class="text-3xl sm:text-4xl font-bold text-white">The Contrast Challenge</h1>
+            <p class="text-gray-400 mt-2">Which sample text seems better contrasted to you?</p>
+        </div>
+
+        <!-- Game Area -->
+        <div id="game-area">
+            <div id="header" class="flex justify-between items-center text-lg mb-4 text-gray-300">
+                <span id="question-counter">Question 1 of 10</span>
+                <span id="score-counter" class="invisible">Score: 0</span>
+            </div>
+
+            <div id="display-card-container" class="grid grid-cols-2 gap-4 mb-6">
+                <!-- Card A -->
+                <div id="card-A" onclick="handleGuess('A')" class="choice-card w-full h-48 flex flex-col items-center justify-center rounded-xl transition-colors duration-300 p-4 relative">
+                    <p id="text-A" class="text-2xl font-bold text-center">Sample Text</p>
+                    <div class="absolute top-2 left-2 bg-black bg-opacity-50 rounded-full h-7 w-7 flex items-center justify-center text-base font-bold">A</div>
+                </div>
+                <!-- Card B -->
+                <div id="card-B" onclick="handleGuess('B')" class="choice-card w-full h-48 flex flex-col items-center justify-center rounded-xl transition-colors duration-300 p-4 relative">
+                    <p id="text-B" class="text-2xl font-bold text-center">Sample Text</p>
+                    <div class="absolute top-2 left-2 bg-black bg-opacity-50 rounded-full h-7 w-7 flex items-center justify-center text-base font-bold">B</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Area -->
+        <div id="feedback-area" class="hidden text-center fade-in">
+             <h2 id="feedback-title" class="text-3xl font-bold mb-3"></h2>
+             <p id="feedback-subtitle" class="text-gray-400 mb-6 text-base max-w-xl mx-auto"></p>
+            
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left p-4 bg-gray-900 rounded-lg">
+                <!-- Results for A -->
+                <div class="p-4 bg-gray-700 rounded-lg">
+                    <h3 class="text-xl font-bold text-white mb-3">Combination A</h3>
+                    <div class="space-y-2">
+                        <div>
+                            <p class="text-sm text-gray-400">WCAG 2.2 Ratio</p>
+                            <p id="wcag-score-A" class="text-lg font-semibold"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">APCA Lc Score</p>
+                            <p id="apca-score-A" class="text-lg font-semibold"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Results for B -->
+                 <div class="p-4 bg-gray-700 rounded-lg">
+                    <h3 class="text-xl font-bold text-white mb-3">Combination B</h3>
+                    <div class="space-y-2">
+                        <div>
+                            <p class="text-sm text-gray-400">WCAG 2.2 Ratio</p>
+                            <p id="wcag-score-B" class="text-lg font-semibold"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">APCA Lc Score</p>
+                            <p id="apca-score-B" class="text-lg font-semibold"></p>
+                        </div>
+                    </div>
+                </div>
+             </div>
+
+            <button onclick="nextQuestion()" class="mt-8 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-lg text-lg transition-transform transform hover:scale-105">
+                Next Question
+            </button>
+        </div>
+
+        <!-- Game Over Area -->
+        <div id="game-over-area" class="hidden text-center fade-in">
+            <h2 class="text-3xl font-bold text-white mb-4">Game Summary</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-8">Here's how you did. The goal was to pick the higher WCAG ratio. Compare your answers to the pair that was actually more readable (higher APCA score).</p>
+            
+            <div id="summary-table-container" class="w-full text-left text-sm sm:text-base">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-600">
+                            <th class="p-2 sm:p-3">Pairs</th>
+                            <th class="p-2 sm:p-3">Your Answer</th>
+                            <th class="p-2 sm:p-3 text-center">Higher WCAG</th>
+                            <th class="p-2 sm:p-3 text-center">Higher APCA (Readability)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summary-table-body" class="divide-y divide-gray-700">
+                        <!-- Rows will be generated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-8 text-center bg-gray-900 p-6 rounded-lg">
+                <p id="wcag-final-score" class="text-xl text-gray-300 mb-2"></p>
+                <p id="apca-final-score" class="text-xl text-gray-300"></p>
+            </div>
+
+            <button onclick="startGame()" class="mt-8 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-lg text-lg transition-transform transform hover:scale-105">
+                Play Again
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questionPairs = [
+            { pairA: { text: '#FF9900', bg: '#000000', wcag: 8.1, apca: 53.6 }, pairB: { text: '#555555', bg: '#FFFFFF', wcag: 5.6, apca: 62.4 }, correctAnswer: 'A' },
+            { pairA: { text: '#00C0FF', bg: '#000000', wcag: 5.5, apca: 42.1 }, pairB: { text: '#777777', bg: '#FFFFFF', wcag: 3.5, apca: 74.3 }, correctAnswer: 'A' },
+            { pairA: { text: '#7A7A7A', bg: '#3C3C3C', wcag: 3.02, apca: 20.4 }, pairB: { text: '#CCCCCC', bg: '#7B7B7B', wcag: 3.03, apca: 30.7 }, correctAnswer: 'B' },
+            { pairA: { text: '#5F5F5F', bg: '#000000', wcag: 3.18, apca: 22.8 }, pairB: { text: '#808080', bg: '#FFFFFF', wcag: 3.24, apca: 79.4 }, correctAnswer: 'B' },
+            { pairA: { text: '#C00000', bg: '#000000', wcag: 3.14, apca: 22.3 }, pairB: { text: '#005A9C', bg: '#000000', wcag: 3.05, apca: 20.9 }, correctAnswer: 'A' },
+            { pairA: { text: '#FF00FF', bg: '#000000', wcag: 5.3, apca: 39.4 }, pairB: { text: '#6A6A6A', bg: '#FFFFFF', wcag: 4.5, apca: 68.2 }, correctAnswer: 'A' },
+            { pairA: { text: '#00FFFF', bg: '#000000', wcag: 8.9, apca: 60.1 }, pairB: { text: '#444444', bg: '#FFFFFF', wcag: 7.0, apca: 56.4 }, correctAnswer: 'A' },
+            { pairA: { text: '#FFBF47', bg: '#000000', wcag: 9.3, apca: 60.6 }, pairB: { text: '#0073FF', bg: '#FFFFFF', wcag: 3.3, apca: 48.9 }, correctAnswer: 'A' },
+            { pairA: { text: '#909090', bg: '#4A4A4A', wcag: 3.05, apca: 21.3 }, pairB: { text: '#A0522D', bg: '#1E1E1E', wcag: 3.25, apca: 24.3 }, correctAnswer: 'B' },
+            { pairA: { text: '#4B8378', bg: '#222222', wcag: 3.04, apca: 21.0 }, pairB: { text: '#8B4513', bg: '#000000', wcag: 3.32, apca: 25.1 }, correctAnswer: 'B' },
+        ];
+
+        // DOM Elements
+        const gameArea = document.getElementById('game-area');
+        const feedbackArea = document.getElementById('feedback-area');
+        const gameOverArea = document.getElementById('game-over-area');
+        const questionCounter = document.getElementById('question-counter');
+        const scoreCounter = document.getElementById('score-counter');
+        const cardA = document.getElementById('card-A');
+        const textA = document.getElementById('text-A');
+        const cardB = document.getElementById('card-B');
+        const textB = document.getElementById('text-B');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackSubtitle = document.getElementById('feedback-subtitle');
+        const wcagScoreA = document.getElementById('wcag-score-A');
+        const apcaScoreA = document.getElementById('apca-score-A');
+        const wcagScoreB = document.getElementById('wcag-score-B');
+        const apcaScoreB = document.getElementById('apca-score-B');
+        const finalScoreEl = document.getElementById('final-score');
+        const summaryTableBody = document.getElementById('summary-table-body');
+        const wcagFinalScoreEl = document.getElementById('wcag-final-score');
+        const apcaFinalScoreEl = document.getElementById('apca-final-score');
+
+
+        // Game State
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userGuesses = [];
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userGuesses = [];
+            questionPairs.sort(() => Math.random() - 0.5);
+
+            gameOverArea.classList.add('hidden');
+            gameArea.classList.remove('hidden');
+            feedbackArea.classList.add('hidden');
+            
+            document.getElementById('score-counter').textContent = `Score: 0`;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            gameArea.classList.remove('hidden');
+            feedbackArea.classList.add('hidden');
+            
+            const currentPair = questionPairs[currentQuestionIndex];
+            questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${questionPairs.length}`;
+            
+            cardA.style.backgroundColor = currentPair.pairA.bg;
+            textA.style.color = currentPair.pairA.text;
+
+            cardB.style.backgroundColor = currentPair.pairB.bg;
+            textB.style.color = currentPair.pairB.text;
+        }
+
+        function handleGuess(guess) {
+            userGuesses.push(guess);
+            const currentPair = questionPairs[currentQuestionIndex];
+            const correct = guess === currentPair.correctAnswer;
+            const readableAnswer = currentPair.pairA.apca > currentPair.pairB.apca ? 'A' : 'B';
+
+            if (correct) {
+                score++;
+                feedbackTitle.textContent = "Correct!";
+                feedbackTitle.style.color = 'rgb(74 222 128)';
+                feedbackSubtitle.textContent = `You're right, Pair ${currentPair.correctAnswer} has the higher WCAG ratio. But notice which one has the higher *readability* (APCA) score below.`;
+            } else {
+                feedbackTitle.textContent = "Not Quite!";
+                feedbackTitle.style.color = 'rgb(248 113 113)';
+                feedbackSubtitle.textContent = `That's a common mistake! Pair ${currentPair.correctAnswer} actually has the higher WCAG ratio. This is why the old algorithm can be so misleading.`;
+            }
+
+            document.getElementById('score-counter').textContent = `Score: ${score}`;
+            showFeedback();
+        }
+
+        function showFeedback() {
+// ... existing code ... -->
+            feedbackArea.classList.remove('hidden');
+        }
+        
+        function nextQuestion() {
+// ... existing code ... -->
+            if (currentQuestionIndex < questionPairs.length) {
+                showQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function generateSummaryTable() {
+            summaryTableBody.innerHTML = ''; // Clear previous results
+            let apcaScore = 0;
+
+            questionPairs.forEach((pair, index) => {
+                const userGuess = userGuesses[index];
+                const wcagCorrect = userGuess === pair.correctAnswer;
+                const higherApcaPair = pair.pairA.apca > pair.pairB.apca ? 'A' : 'B';
+                const apcaCorrect = userGuess === higherApcaPair;
+
+                if (apcaCorrect) {
+                    apcaScore++;
+                }
+
+                const row = document.createElement('tr');
+                row.className = 'bg-gray-800';
+
+                row.innerHTML = `
+                    <td class="p-2 sm:p-3">
+                        <div class="flex items-center gap-2">
+                            <div style="background-color:${pair.pairA.bg}; color:${pair.pairA.text};" class="w-10 h-10 rounded-md flex items-center justify-center font-bold text-xs">A</div>
+                            <div style="background-color:${pair.pairB.bg}; color:${pair.pairB.text};" class="w-10 h-10 rounded-md flex items-center justify-center font-bold text-xs">B</div>
+                        </div>
+                    </td>
+                    <td class="p-2 sm:p-3 font-bold">${userGuess} ${wcagCorrect ? '✅' : '❌'}</td>
+                    <td class="p-2 sm:p-3 text-center">${pair.correctAnswer}</td>
+                    <td class="p-2 sm:p-3 text-center">${higherApcaPair}</td>
+                `;
+                summaryTableBody.appendChild(row);
+            });
+
+            return apcaScore;
+        }
+
+
+        function endGame() {
+            gameArea.classList.add('hidden');
+            feedbackArea.classList.add('hidden');
+            
+            const apcaFinalScore = generateSummaryTable();
+            
+            wcagFinalScoreEl.textContent = `Based on the WCAG contrast algorithm, your score is ${score} / ${questionPairs.length}.`;
+            apcaFinalScoreEl.textContent = `Based on perceptual readability (APCA), your score is ${apcaFinalScore} / ${questionPairs.length}.`;
+
+            gameOverArea.classList.remove('hidden');
+        }
+        
+        function updateScoreDisplay() {
+            // This function is no longer needed during the game
+        }
+
+        window.onload = startGame;
+    </script>
+</body>
+</html>
+
+
