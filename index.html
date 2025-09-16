@@ -141,30 +141,30 @@
 
     <script>
         const questionPairs = [
-            // 1. New - Higher WCAG is A, Higher APCA is B.
-            { pairA: { text: '#D8000C', bg: '#181818', apca: 19 }, pairB: { text: '#0075C9', bg: '#FFFFFF', apca: 51 } },
-            // 2. New - Higher WCAG is A, Higher APCA is B.
-            { pairA: { text: '#FFA500', bg: '#000080', apca: 38 }, pairB: { text: '#696969', bg: '#FFFFFF', apca: 68 } },
+            // 1. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.06
+            { pairA: { text: '#D23D00', bg: '#000000', apca: 33 }, pairB: { text: '#757575', bg: '#FFFFFF', apca: 73 } },
+            // 2. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.04
+            { pairA: { text: '#8A2BE2', bg: '#333333', apca: 29 }, pairB: { text: '#005A9C', bg: '#FFFFFF', apca: 60 } },
             // 3. Keep Original - Inverted Pair
             { 
                 pairA: { text: '#6E6E6E', bg: '#FFFFFF', apca: 70.1 }, 
                 pairB: { text: '#FFFFFF', bg: '#6E6E6E', apca: 34.2 }, 
                 isSpecial: 'inverted'
             },
-            // 4. New - Higher WCAG is A, Higher APCA is B.
-            { pairA: { text: '#C0C0C0', bg: '#6A6A6A', apca: 31 }, pairB: { text: '#006400', bg: '#D3D3D3', apca: 51 } },
-            // 5. New - Higher WCAG is B, Higher APCA is A.
-            { pairA: { text: '#FFFF00', bg: '#1A1A1A', apca: 80 }, pairB: { text: '#00FFFF', bg: '#000000', apca: 73 } },
+            // 4. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.57
+            { pairA: { text: '#E6E6E6', bg: '#6A6A6A', apca: 38 }, pairB: { text: '#000000', bg: '#87CEEB', apca: 78 } },
+            // 5. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.5
+            { pairA: { text: '#00FFFF', bg: '#00008B', apca: 40 }, pairB: { text: '#404040', bg: '#C0C0C0', apca: 68 } },
             // 6. Keep Original - Red/Green
             { pairA: { text: '#90EE90', bg: '#B22222', apca: 15.4 }, pairB: { text: '#0097C3', bg: '#FFFFFF', apca: 50.1 } },
-            // 7. New - Higher WCAG is A, Higher APCA is B.
-            { pairA: { text: '#FF4500', bg: '#191970', apca: 30 }, pairB: { text: '#000000', bg: '#ADD8E6', apca: 74 } },
+            // 7. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.86
+            { pairA: { text: '#FF69B4', bg: '#000000', apca: 44 }, pairB: { text: '#00688B', bg: '#FFFFFF', apca: 65 } },
             // 8. Keep Original
             { pairA: { text: '#2E8B57', bg: '#F5F5F5', apca: 61.3 }, pairB: { text: '#FFC400', bg: '#282828', apca: 58.1 } },
-            // 9. New - Higher WCAG is A, Higher APCA is B.
-            { pairA: { text: '#8A2BE2', bg: '#000000', apca: 40 }, pairB: { text: '#0000CD', bg: '#FFFFFF', apca: 61 } },
-            // 10. New - Higher WCAG is A, Higher APCA is B.
-            { pairA: { text: '#008B8B', bg: '#2F4F4F', apca: 23 }, pairB: { text: '#000000', bg: '#BEBEBE', apca: 65 } }
+            // 9. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.01
+            { pairA: { text: '#EE82EE', bg: '#121212', apca: 44 }, pairB: { text: '#000000', bg: '#9ACD32', apca: 85 } },
+            // 10. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.95
+            { pairA: { text: '#FF7F50', bg: '#2B2B2B', apca: 33 }, pairB: { text: '#006400', bg: '#FFFFFF', apca: 50 } }
         ];
 
         // --- CONTRAST CALCULATION ENGINE ---
@@ -361,7 +361,7 @@
                 
                 let higherWcagText = correctAnswer;
                 if (pair.isSpecial === 'inverted') {
-                    higherWagText = 'Both Same';
+                    higherWcagText = 'Both Same';
                 }
 
                 row.innerHTML = `
