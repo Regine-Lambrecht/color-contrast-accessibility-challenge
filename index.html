@@ -141,9 +141,9 @@
 
     <script>
         const questionPairs = [
-            // 1. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.06
+            // 1. WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.99
             { pairA: { text: '#D23D00', bg: '#000000', apca: 33 }, pairB: { text: '#757575', bg: '#FFFFFF', apca: 73 } },
-            // 2. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.04
+            // 2. Corrected - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.04
             { pairA: { text: '#8A2BE2', bg: '#333333', apca: 29 }, pairB: { text: '#005A9C', bg: '#FFFFFF', apca: 60 } },
             // 3. Keep Original - Inverted Pair
             { 
@@ -151,19 +151,19 @@
                 pairB: { text: '#FFFFFF', bg: '#6E6E6E', apca: 34.2 }, 
                 isSpecial: 'inverted'
             },
-            // 4. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.57
+            // 4. Corrected - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.18
             { pairA: { text: '#E6E6E6', bg: '#6A6A6A', apca: 38 }, pairB: { text: '#000000', bg: '#87CEEB', apca: 78 } },
-            // 5. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.5
+            // 5. WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.49
             { pairA: { text: '#00FFFF', bg: '#00008B', apca: 40 }, pairB: { text: '#404040', bg: '#C0C0C0', apca: 68 } },
             // 6. Keep Original - Red/Green
             { pairA: { text: '#90EE90', bg: '#B22222', apca: 15.4 }, pairB: { text: '#0097C3', bg: '#FFFFFF', apca: 50.1 } },
-            // 7. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.86
+            // 7. WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.86
             { pairA: { text: '#FF69B4', bg: '#000000', apca: 44 }, pairB: { text: '#00688B', bg: '#FFFFFF', apca: 65 } },
             // 8. Keep Original
             { pairA: { text: '#2E8B57', bg: '#F5F5F5', apca: 61.3 }, pairB: { text: '#FFC400', bg: '#282828', apca: 58.1 } },
-            // 9. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.01
+            // 9. WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.01
             { pairA: { text: '#EE82EE', bg: '#121212', apca: 44 }, pairB: { text: '#000000', bg: '#9ACD32', apca: 85 } },
-            // 10. New - WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.95
+            // 10. WCAG(A) > WCAG(B), but APCA(B) > APCA(A). WCAG diff: 0.95
             { pairA: { text: '#FF7F50', bg: '#2B2B2B', apca: 33 }, pairB: { text: '#006400', bg: '#FFFFFF', apca: 50 } }
         ];
 
